@@ -11,6 +11,7 @@
 library("tidyverse")
 library("tidyr")
 library("data.table")
+library("scales")
 
 
 # Load data & process data ----
@@ -31,16 +32,16 @@ raw_data <- read.table("data/Exp-miBRS_track_information_hg38.tsv",
 
 # Process data ----
 data_summary <- raw_data %>% 
+  separate_rows(REGION, sep=",") %>% 
   group_by(REGION) %>% 
-  summarize(count=n())
+  summarize(count=n()) %>% 
+  mutate(percent=count/sum(count)*100)
 
 
 # Plot ----
 barplot <- ggplot(data_summary, 
-                  aes(x=reorder(REGION, -count), y=count))+
+                  aes(x=reorder(REGION, -percent), y=percent))+
   geom_bar(stat="identity")+
-  geom_hline(aes(yintercept=100), color="red", linetype="dashed", alpha=.7)+
-  scale_y_continuous(trans="log10")+
   theme_minimal() +
   theme(panel.border = element_rect(color = "black", fill = NA),
         axis.text.x = element_text(size=10, hjust = 0.5, vjust = 0.5, angle=90),
@@ -49,7 +50,7 @@ barplot <- ggplot(data_summary,
         axis.text.y = element_text(size = 12),
         legend.title = element_text(size=12))+
   xlab("Target Gene Region")+
-  ylab("Interaction count")
+  ylab("Proportion (%)")
 
 
 # Save plot ----
