@@ -68,10 +68,12 @@ random_graph <- sample_gnm(n=length(c(mirna_target_data$MIRNA,   # number of ver
 random_degree_dist <- data.frame(k=as.numeric(degree(random_graph))) %>% 
   group_by(k) %>% 
   summarize(freq=n()) %>% 
-  mutate(freq=freq/sum(freq)) %>% 
   filter(k!=0) %>% 
+  mutate(freq=freq/sum(freq)) %>% 
   as.data.frame() 
-mirna_degree_dist <- data.frame(k=as.numeric(degree(mirna_graph))) %>% 
+mirna_degree_dist <- mirna_target_data %>% 
+  group_by(MIRNA) %>% 
+  summarize(k=n()) %>% 
   group_by(k) %>% 
   summarize(freq=n()) %>% 
   mutate(freq=freq/sum(freq)) %>% 
@@ -85,6 +87,8 @@ colors <- c("miRNA - target network" = "darkblue",
 plot_01 <- ggplot(data=mirna_degree_dist, aes(x=k, y=freq))+
   geom_line(alpha=0.4, stat="identity", aes(color="miRNA - target network"))+
   geom_point(size=3, aes(color="miRNA - target network"))+
+  geom_smooth(data=mirna_degree_dist, aes(x=k, y=freq), 
+              inherit.aes=F, method='lm', se=T, alpha=0.5)+
   geom_point(data=random_degree_dist, aes(x=k, y=freq, color="ER random network"),
              size=3)+
   geom_line(data=random_degree_dist, aes(x=k, y=freq, color="ER random network"), 
