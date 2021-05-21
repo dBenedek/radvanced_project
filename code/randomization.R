@@ -39,6 +39,7 @@
 
         (occurence <- (table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM)))
         occurence_df <- as.data.frame(table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM))
+        occurence_df <- arrange(occurence_df,Var1)
         occurence_df %>% 
                 group_by(Var1) %>% 
                 summarize(Var1,Var2,sum=sum(Freq),max=max(Freq),percent=(Freq)/sum(Freq))
@@ -54,6 +55,7 @@
 
         (occurence_random <- (table(miRNA_data_randomized$MIRNA,miRNA_data_randomized$CHROM)))
         occurence_random_df <- as.data.frame(table(miRNA_data_randomized$MIRNA,miRNA_data_randomized$CHROM))
+        occurence_random_df <- arrange(occurence_random_df,Var1)
         occurence_random_df %>% 
                 group_by(Var1) %>% 
                 summarize(Var1,Var2,sum=sum(Freq),max=max(Freq),percent=(Freq)/sum(Freq))
@@ -75,10 +77,22 @@
                 xlab="Chromosome",ylab="miRNA",
                 main="The number of miRNA target genes in each chromosome",
                 margins=c(4,8))
-        ggplot(occurence_df,aes(Var2,Var1,fill=Freq))+
-                geom_tile()
+        ggplot(occurence_df[,],aes(Var2,Var1,fill=Freq))+
+                labs(x="chromosome",
+                     y="miRNA",
+                     title="The occurence of target genes for miRNAs")+
+                geom_tile()+
+                scale_fill_gradient(name="Target \n numbers",
+                                    low="white", high="darkblue",
+                                    limits=c(0,100))
         ggplot(target100,aes(Var2,Var1,fill=percent))+
-                geom_tile()
+                labs(x="chromosome",
+                     y="miRNA",
+                     title="The occurence of target genes for miRNAs, \n which have more than 100 targets")+
+                geom_tile()+
+                scale_fill_gradient(name="Frequency",
+                                    low="white", high="darkblue",
+                                    limits=c(0,0.2))
 
 # random
 
@@ -88,8 +102,22 @@
                 xlab="Chromosome",ylab="miRNA",
                 main="The number of miRNA target genes in each chromosome \n after randomization",
                 margins=c(4,8))
+        ggplot(occurence_random_df[,],aes(Var2,Var1,fill=Freq))+
+                labs(x="chromosome",
+                     y="miRNA",
+                     title="After randomization, the occurence of target genes for miRNAs")+
+                geom_tile()+
+                scale_fill_gradient(name="Target \n numbers",
+                                    low="white", high="darkblue",
+                                    limits=c(0,100))
         ggplot(target100_rand,aes(Var2,Var1,fill=percent))+
-                geom_tile()
+                labs(x="chromosome",
+                     y="miRNA",
+                     title="After randomization, the occurence of target genes for miRNAs, \n which have more than 100 targets")+
+                geom_tile()+
+                scale_fill_gradient(name="Frequency",
+                                    low="white", high="darkblue",
+                                    limits=c(0,0.2))
 
         
         
