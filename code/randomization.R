@@ -82,7 +82,8 @@
                      y="miRNA",
                      title="The occurence of target genes for miRNAs")+
                 geom_tile()+
-                scale_fill_gradient(name="Target \n numbers",
+                theme(axis.text.y=element_blank())+
+                scale_fill_gradient(name="Target \n number",
                                     low="white", high="darkblue",
                                     limits=c(0,100))
         ggplot(target100,aes(Var2,Var1,fill=percent))+
@@ -90,7 +91,7 @@
                      y="miRNA",
                      title="The occurence of target genes for miRNAs, \n which have more than 100 targets")+
                 geom_tile()+
-                scale_fill_gradient(name="Frequency",
+                scale_fill_gradient(name="Target \n frequency",
                                     low="white", high="darkblue",
                                     limits=c(0,0.2))
 
@@ -107,7 +108,8 @@
                      y="miRNA",
                      title="After randomization, the occurence of target genes for miRNAs")+
                 geom_tile()+
-                scale_fill_gradient(name="Target \n numbers",
+                theme(axis.text.y=element_blank())+
+                scale_fill_gradient(name="Target \n number",
                                     low="white", high="darkblue",
                                     limits=c(0,100))
         ggplot(target100_rand,aes(Var2,Var1,fill=percent))+
@@ -115,7 +117,7 @@
                      y="miRNA",
                      title="After randomization, the occurence of target genes for miRNAs, \n which have more than 100 targets")+
                 geom_tile()+
-                scale_fill_gradient(name="Frequency",
+                scale_fill_gradient(name="Target \n frequency",
                                     low="white", high="darkblue",
                                     limits=c(0,0.2))
 
