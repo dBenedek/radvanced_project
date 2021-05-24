@@ -30,7 +30,7 @@ mirna_target_data <- read_tsv("data/Exp-miBRS_track_information_hg38.tsv") %>%
   dplyr::select(c(MIRNA, GENES, CHROM)) %>% 
   separate_rows(MIRNA, sep = ",") %>%
   separate_rows(GENES, sep = ",") %>%
-  filter(!is.na(MIRNA) | !is.na(GENES) | !is.na(CHROM)) %>% 
+  filter(!is.na(CHROM)) %>% 
   mutate(MIRNA=str_replace(MIRNA, "miR", "mir")) %>% 
   mutate(MIRNA=str_replace(MIRNA, "hsa-", "")) %>% 
   mutate(MIRNA=str_replace(MIRNA, "-", "")) %>%
@@ -43,8 +43,8 @@ mirna_target_data <- read_tsv("data/Exp-miBRS_track_information_hg38.tsv") %>%
   dplyr::select(MIRNA:seqid) %>% 
   dplyr::rename(target_chr=CHROM,
                 mirna_chr=seqid) %>% 
-  filter(!is.na(MIRNA),
-         !is.na(mirna_chr))
+  filter(!is.na(mirna_chr)) %>% 
+  filter(target_chr!="chrM")
 
 plot1_data_genecount <- mirna_target_data %>% 
   dplyr::select(c(GENES, target_chr)) %>% 
@@ -52,8 +52,8 @@ plot1_data_genecount <- mirna_target_data %>%
   group_by(target_chr) %>% 
   summarize(count=n()) %>% 
   left_join(chr_info, by=c("target_chr"="V1")) %>% 
-  mutate(norm_count=count/V2*10000000) %>% 
-  filter()
+  mutate(norm_count=count/(V2/10000000))  # 10M
+  
 
 plot1_data_mirnacount <- mirna_target_data %>% 
   dplyr::select(c(MIRNA, mirna_chr)) %>% 
@@ -61,20 +61,20 @@ plot1_data_mirnacount <- mirna_target_data %>%
   group_by(mirna_chr) %>% 
   summarize(count=n()) %>% 
   left_join(chr_info, by=c("mirna_chr"="V1")) %>% 
-  mutate(norm_count=count/V2*1000000000) %>% 
-  filter()
+  mutate(norm_count=count/(V2/1000000000)) # 10M
+  
 
-plot1_data_mirnacount <- gencode_annot %>% 
-  filter(gene_type=="miRNA",
-         gene_name %in% mirna_target_data$MIRNA) %>% 
-  dplyr::select(c(seqid, gene_name)) %>% 
-  dplyr::rename(mirna_chr=seqid) %>% 
-  distinct() %>% 
-  group_by(mirna_chr) %>% 
-  summarize(count=n()) %>% 
-  left_join(chr_info, by=c("mirna_chr"="V1")) %>% 
-  mutate(norm_count=count/V2*1000000000) %>% 
-  filter()
+# plot1_data_mirnacount <- gencode_annot %>% 
+#   filter(gene_type=="miRNA",
+#          gene_name %in% mirna_target_data$MIRNA) %>% 
+#   dplyr::select(c(seqid, gene_name)) %>% 
+#   dplyr::rename(mirna_chr=seqid) %>% 
+#   distinct() %>% 
+#   group_by(mirna_chr) %>% 
+#   summarize(count=n()) %>% 
+#   left_join(chr_info, by=c("mirna_chr"="V1")) %>% 
+#   mutate(norm_count=count/V2*1000000000) 
+
 
 # Plot ----
 cor <- cor(plot1_data_genecount$norm_count[1:23], plot1_data_mirnacount$norm_count)
@@ -83,7 +83,7 @@ level_order <- c("chr1", "chr2", "chr3", "chr4", "chr5", "chr6",
                  "chr13", "chr14", "chr15", "chr16", "chr17", "chr18",
                  "chr19", "chr20", "chr21", "chr22", "chrX", "chrY")
 
-barplot <- ggplot(plot1_data_interactions, 
+barplot <- ggplot(plot1_data_genecount, 
                   aes(x=factor(target_chr, level=level_order), 
                       y=norm_count))+
   geom_bar(stat="identity", fill="steelblue")+
@@ -92,8 +92,6 @@ barplot <- ggplot(plot1_data_interactions,
                  y=norm_count),
              color="red",
              size=4)+
-  annotate(geom="text", label=paste0("corr. = ", as.character(round(cor, 2))), 
-           x="chrX", y=350)+
   scale_y_continuous(name = "Normalized target gene count",
                      sec.axis = sec_axis(~./100, 
                                          name="Normalized miRNA count"))+
