@@ -66,7 +66,7 @@ knitr::include_graphics("../docs/miRNA_schematic.gif")
    
 ## Igraph visualization
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 # Load libraries ----
 library("tidyverse")
 library("data.table")
@@ -191,7 +191,7 @@ plot(net, rescale=F, layout=l*1.0,
 ```
 
 ## Igraph visualization
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 # Plot node sizes according to hubness
 plot(net, rescale=F, layout=l*1.0,
        edge.arrow.size=0.5, 
@@ -234,7 +234,7 @@ knitr::include_graphics("../docs/project_cytoscape_figure.png")
 1. data cleaning
 2. randomizing the target gene chromosome localizations
 3. calculating the occurance
-```{r, echo=FALSE}
+```{r, echo=FALSE,eval=FALSE}
 # Libraries ----
 
         library(tidyverse)
@@ -273,7 +273,7 @@ knitr::include_graphics("../docs/project_cytoscape_figure.png")
 ```{r, eval=FALSE}
         (occurence <- (table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM)))
 ```
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
         (occurence <- (table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM)))
         occurence_df <- as.data.frame(table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM))
         occurence_df <- arrange(occurence_df,Var1)
