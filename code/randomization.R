@@ -5,6 +5,7 @@
 # Libraries ----
 
         library(tidyverse)
+        # library("ComplexHeatmap")
 
 # Data cleaning ----
 
@@ -30,13 +31,12 @@
         miRNA_data_randomized$CHROM <- sample(unique(miRNA_data_4$CHROM),
                                               size=nrow(miRNA_data_4),
                                               replace=TRUE) # Randomizing the target gene's location
-        miRNA_data_randomized$GENES <- sample(miRNA_data_4$GENES,
-                                              size=nrow(miRNA_data_4),
-                                              replace=FALSE) # Randomizing the target gene
+        # miRNA_data_randomized$GENES <- sample(miRNA_data_4$GENES,
+        #                                       size=nrow(miRNA_data_4),
+        #                                       replace=FALSE) # Randomizing the target gene
 # Checking the occurrence ----
 
 # original
-
         (occurence <- (table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM)))
         occurence_df <- as.data.frame(table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM))
         occurence_df <- arrange(occurence_df,Var1)
@@ -52,7 +52,6 @@
                 summarise(Var1,Var2,percent)
 
 # random
-
         (occurence_random <- (table(miRNA_data_randomized$MIRNA,miRNA_data_randomized$CHROM)))
         occurence_random_df <- as.data.frame(table(miRNA_data_randomized$MIRNA,miRNA_data_randomized$CHROM))
         occurence_random_df <- arrange(occurence_random_df,Var1)
@@ -69,62 +68,106 @@
 
 # Visualization ----
 
-# original
-
+# original 1. plot
+        png("original1.png", width = 700, height = 700)
         heatmap(occurence[,],
                 scale="row",
                 Rowv=TRUE,Colv=NA,
                 xlab="Chromosome",ylab="miRNA",
                 main="The number of miRNA target genes in each chromosome",
                 margins=c(4,8))
-        ggplot(occurence_df[,],aes(Var2,Var1,fill=Freq))+
-                labs(x="chromosome",
-                     y="miRNA",
-                     title="The occurence of target genes for miRNAs")+
-                geom_tile()+
-                theme(axis.text.y=element_blank())+
-                scale_fill_gradient(name="Target \n number",
-                                    low="white", high="darkblue",
-                                    limits=c(0,100))
-        ggplot(target100,aes(Var2,Var1,fill=percent))+
-                labs(x="chromosome",
-                     y="miRNA",
-                     title="The occurence of target genes for miRNAs, \n which have more than 100 targets")+
-                geom_tile()+
-                scale_fill_gradient(name="Target \n frequency",
-                                    low="white", high="darkblue",
-                                    limits=c(0,0.2))
+        dev.off()
 
-# random
-
+# random 1. plot
+        png("random1.png", width = 700, height = 700)
         heatmap(occurence_random[],
                 scale="row",
                 Rowv=TRUE,Colv=NA,
                 xlab="Chromosome",ylab="miRNA",
                 main="The number of miRNA target genes in each chromosome \n after randomization",
                 margins=c(4,8))
-        ggplot(occurence_random_df[,],aes(Var2,Var1,fill=Freq))+
-                labs(x="chromosome",
+        # Heatmap(occurence_random[],
+        #         name="The",
+        #         cluster_columns = FALSE,
+        #         clustering_method_rows ="complete",
+        #         show_row_names = FALSE,
+        #         row_title="miRNA",row_title_gp=gpar(fontsize = 14),
+        #         column_title="Chromosome",column_title_gp=gpar(fontsize = 14))
+        dev.off()
+
+# original 2. plot
+        original2 <- ggplot(occurence_df[,],aes(Var2,Var1,fill=Freq))+
+                labs(x="Chromosome",
+                     y="miRNA",
+                     title="The occurence of target genes for miRNAs")+
+                geom_tile()+
+                theme(axis.title.x = element_text(size = 14),
+                      axis.text.x = element_text(size = 12),
+                      axis.title.y = element_text(size = 14),
+                      axis.text.y = element_blank(),
+                      legend.title = element_text(size = 14),
+                      legend.text = element_text(size = 12),
+                      plot.title = element_text(size = 20))+
+                scale_fill_gradient(name="Target \nnumber",
+                                    low="white", high="darkblue",
+                                    limits=c(0,100))
+        ggsave("C:/Users/Lenovo/Documents/R/original2.png",
+               original2, units = "in", width = 14, height = 10)
+
+# random 2. plot
+        random2 <- ggplot(occurence_random_df[,],aes(Var2,Var1,fill=Freq))+
+                labs(x="Chromosome",
                      y="miRNA",
                      title="After randomization, the occurence of target genes for miRNAs")+
                 geom_tile()+
-                theme(axis.text.y=element_blank())+
-                scale_fill_gradient(name="Target \n number",
+                theme(axis.title.x = element_text(size = 14),
+                      axis.text.x = element_text(size = 12),
+                      axis.title.y = element_text(size = 14),
+                      axis.text.y = element_blank(),
+                      legend.title = element_text(size = 14),
+                      legend.text = element_text(size = 12),
+                      plot.title = element_text(size = 20))+
+                scale_fill_gradient(name="Target \nnumber",
                                     low="white", high="darkblue",
                                     limits=c(0,100))
-        ggplot(target100_rand,aes(Var2,Var1,fill=percent))+
-                labs(x="chromosome",
+        ggsave("C:/Users/Lenovo/Documents/R/random2.png",
+               random2, units = "in", width = 14, height = 10)
+
+# original 3. plot
+        original3 <- ggplot(target100,aes(Var2,Var1,fill=percent))+
+                labs(x="Chromosome",
                      y="miRNA",
-                     title="After randomization, the occurence of target genes for miRNAs, \n which have more than 100 targets")+
+                     title="The occurence of target genes for miRNAs, \nwhich have more than 100 targets")+
                 geom_tile()+
-                scale_fill_gradient(name="Target \n frequency",
+                theme(axis.title.x = element_text(size = 14),
+                      axis.text.x = element_text(size = 12),
+                      axis.title.y = element_text(size = 14),
+                      axis.text.y = element_text(size = 12),
+                      legend.title = element_text(size = 14),
+                      legend.text = element_text(size = 12),
+                      plot.title = element_text(size = 20))+
+                scale_fill_gradient(name="Target \nfrequency",
                                     low="white", high="darkblue",
                                     limits=c(0,0.2))
+        ggsave("C:/Users/Lenovo/Documents/R/original3.png",
+               original3, units = "in", width = 15, height = 10)
 
-        
-        
-        
-        
-        
-        
+# random 3. plot
+        random3 <- ggplot(target100_rand,aes(Var2,Var1,fill=percent))+
+                labs(x="Chromosome",
+                     y="miRNA",
+                     title="After randomization, the occurence of target genes for miRNAs, \nwhich have more than 100 targets")+
+                geom_tile()+
+                theme(axis.title.x = element_text(size = 14),
+                      axis.text.x = element_text(size = 12),
+                      axis.title.y = element_text(size = 14),
+                      axis.text.y = element_text(size = 12),
+                      legend.title = element_text(size = 14),
+                      legend.text = element_text(size = 12),
+                      plot.title = element_text(size = 20))+
+                scale_fill_gradient(name="Target \nfrequency",
+                                    low="white", high="darkblue",
+                                    limits=c(0,0.2))
+        ggsave("C:/Users/Lenovo/Documents/R/random3.png",
+               random3, units = "in", width = 15, height = 10)
         
