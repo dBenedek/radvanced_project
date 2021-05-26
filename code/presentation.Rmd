@@ -40,8 +40,8 @@ $(document).ready(function() {
 
 ## Questions to answer
 
-- How does the distance between the miRNA gene and the target's gene affects their regulation?
-- What are the specificities of the miRNA - targets interaction network?
+- How does the distance between the miRNA gene and the target gene affect their regulation?
+- What are the specificities of the miRNA - target interaction network?
 
 ## Introduction - miRNAs
 ```{r, out.width = "600px", echo=FALSE, fig.align="center"}
