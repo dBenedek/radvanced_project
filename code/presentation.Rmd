@@ -40,8 +40,11 @@ $(document).ready(function() {
 
 ## Questions to answer
 
-- How does the distance between the miRNA gene and the target gene affect their regulation?
-- What are the specificities of the miRNA - target interaction network?
+- What are the specificities of the miRNA - target interaction network? How can be it modelled using networks? - Luca
+- Does the chromosomal localization of the target gene affect its miRNA regulation? - Sophie
+- What is the connection between the function of the regulated target genes and the miRNAs regulating them? - Ági
+- How does the distance between the miRNA gene and the target gene affect their regulation? - Benedek
+
 
 ## Introduction - miRNAs
 ```{r, out.width = "600px", echo=FALSE, fig.align="center"}
