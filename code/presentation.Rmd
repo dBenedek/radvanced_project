@@ -63,6 +63,8 @@ knitr::include_graphics("../docs/miRNA_schematic.gif")
 - The interactors (gene/miRNA) are represented by __nodes__ and their connections by __edges__
 - Our network is __directed__, meaning the connections can only happen one was and not vice versa
 - Using the igraph package you can visualize networks and customize its visual attributes
+   
+## Igraph visualization
 
 ```{r, echo=FALSE, eval=FALSE}
 # Load libraries ----
@@ -188,6 +190,7 @@ plot(net, rescale=F, layout=l*1.0,
        main = 'Degrees')
 ```
 
+## Igraph visualization
 ```{r, echo=FALSE, eval=FALSE}
 # Plot node sizes according to hubness
 plot(net, rescale=F, layout=l*1.0,
@@ -223,7 +226,7 @@ if(continue){
 }
  ```
 ## Cytoscape visualization with RCy3
-```{r, out.width = "850px", echo=FALSE, fig.align="center"}
+```{r, out.width = "700px", echo=FALSE, fig.align="center"}
 knitr::include_graphics("../docs/project_cytoscape_figure.png")
 ```
 
@@ -451,6 +454,180 @@ knitr::include_graphics("../docs/original3.png")
 knitr::include_graphics("../docs/random3.png")
 ```
    
+## GO Terms analysis
+
+- Retrieving the gene ontology information of the genes based on ensemble gene identifiers
+- biomaRt package
+```{r, echo=FALSE,eval=FALSE}
+###################################################################################
+#               A GO Term analyses using the biomaRt package
+###################################################################################
+
+library("biomaRt")
+library("GO.db")
+
+setwd("D:/University/4_SEMESTER/R_advanced/miRNA_project")
+
+# Load the data: -----
+
+mirnas <- read.table("D:/University/4_SEMESTER/R_advanced/miRNA_project/mirna_targetgene_pairs.tsv", header = TRUE)
+head(mirnas)
+
+# data cleaning is needed to remove the NA values: ----
+gene_ids <- mirnas$mirna_gene_id
+
+print(gene_ids)
+
+gene_ids <- gene_ids[!is.na(gene_ids)]
+print(gene_ids)
+
+# //way2//Removing the NA values:
+gene_ids <- na.omit(gene_ids)
+head(gene_ids)
+
+# GO analyses: ----
+
+listMarts()
+listDatasets(ensembl) # "hsapiens_gene_ensembl" 
+listDatasets(ensembl)$dataset # just ..._gene_ensembl datasets printed out
+
+# Choosing the ensembl mart and homo sapiens dataset:
+ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+
+# Searching for filters (for the query which will be built)
+filters = listFilters(ensembl)
+head(filters)
+# Check all the filters to find those what can be important for now:
+View(filters)
+
+# Check all the filters to find those what can be important for now:
+attributes = listAttributes(ensembl)
+head(attributes)
+View(attributes)
+# Selected attributes:
+# ensembl_gene_id - Gene stable ID
+# chromosome_name - Chromosome/scaffold name
+# external_gene_name - Gene name
+# transcript_count - Transcript count
+# go_id - GO term accession
+# name_1006 - GO term name
+
+# Another way for writing out the attributes:
+grep("go", attributes$name, ignore.case = T, value = T)
+# Apply the same for filters:
+grep("ensembl", filters$name, ignore.case = TRUE, value = TRUE)
+# ensembl_gene_id - I will use this for filtering (I have these ensemble gene ids)
+
+# Probes:
+gene <- "ENSG00000188290"
+geneSet <- c('ENSG00000188290', 'ENSG00000176022', 'ENSG00000176022')
+
+# Probe on one gene:
+getBM(attributes = c("ensembl_gene_id", "name_1006"), filters = "ensembl_gene_id", values = gene, mart = ensembl)
+# Probe on one gene with all the attributes:
+getBM(attributes = c("ensembl_gene_id", "name_1006", "go_id", "external_gene_name", "transcript_count", "chromosome_name"), filters = "ensembl_gene_id", values = gene, mart = ensembl)
+
+# Probe on a set of genes:
+# just 2 attributes
+getBM(attributes =  c("ensembl_gene_id", "name_1006"), filters = "ensembl_gene_id", values = geneSet, mart = ensembl)
+# all the chosen attributes:
+getBM(attributes = c("ensembl_gene_id", "name_1006", "go_id", "external_gene_name", "transcript_count", "chromosome_name"), filters = "ensembl_gene_id", values = geneSet, mart = ensembl)
+
+
+# Query on all the gene ids: 
+GO_Terms_2_atrs <- getBM(attributes = "go_id", filters = "ensembl_gene_id", values = gene_ids, mart = ensembl)
+GO_Terms_2_atrs <- as.data.frame(GO_Terms_2_atrs)
+write.table(GO_Terms_2_atrs, file = "GO_terms_2_atrs_output.csv", sep = "\t")
+
+# Extended filtering - filtering data for GO enrichment analyses:
+GO_Terms <- getBM(attributes = c("ensembl_gene_id", "name_1006", "go_id", "external_gene_name", "transcript_count", "chromosome_name"), filters = "ensembl_gene_id", values = gene_ids, mart = ensembl)
+GO_Terms <- as.data.frame(GO_Terms)
+View(GO_Terms)
+
+write.table(GO_Terms, file = "GO_terms_output_2.csv", sep = "\t")
+```
+
+## Distribution of molecular functions on the chromosomes
+
+- How are the molecular functions distributed on the chromosomes?
+```{r, echo=FALSE,eval=FALSE}
+## Load libraries and the datatable ----
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+
+GO_Terms <- read.table("D:/University/4_SEMESTER/R_advanced/miRNA_project/GO_terms_output_2.csv", header = TRUE)
+head(GO_Terms)
+
+View(GO_Terms)
+
+#########################################################################################
+#########################################################################################
+
+# 1. Filtering for interesting genes: ----
+
+# cholesterol homeostasis
+chol_hom <- "cholesterol homeostasis"
+chol_hom_go_terms <- GO_Terms %>% filter(name_1006 %in% chol_hom)
+head(chol_hom_go_terms)
+
+# positive regulation of translation - moderately general
+pos_reg_translation <- "positive regulation of translation"
+prt_go_terms <- GO_Terms %>% filter(name_1006 %in% pos_reg_translation)
+head(prt_go_terms)
+
+# gene silencing by miRNA - very general
+gene_silencing_miRMA <- "gene silencing by miRNA"
+silenc_go_terms <- GO_Terms %>% filter(name_1006 %in% gene_silencing_miRMA)
+
+# positive regulation of MAPK cascade - very rare
+pos_reg_MAPKc <- "positive regulation of MAPK cascade"
+mapk_go_terms <- GO_Terms %>% filter(name_1006 %in% pos_reg_MAPKc)
+
+# negative regulation of cell migration - general
+neg_reg_migr <- "negative regulation of cell migration"
+migr_go_terms <- GO_Terms %>% filter(name_1006 %in% neg_reg_migr)
+
+# cellular response to insulin stimulus - rare
+cresp_ins_stim <- "cellular response to insulin stimulus"
+ins_stim_go_terms <- GO_Terms %>% filter(name_1006 %in% cresp_ins_stim)
+ins_stim_go_terms
+
+#########################################################################################
+filter_go_terms <- c("GO:0042632", "GO:0045727", "GO:0035195", "GO:0043410", "GO:0030336", "GO:0032869")
+filtered_go_terms <- GO_Terms %>% filter(go_id %in% filter_go_terms)
+head(filtered_go_terms)
+
+chr_occurrences_df <- as.data.frame(table(filtered_go_terms$go_id, filtered_go_terms$chromosome_name))
+chr_occurrences
+
+selected_genes_plot <- ggplot(chr_occurrences, aes(x = Var2, y = Freq, fill = Var1))+
+  geom_col()+
+  theme_light()+
+  labs(x = "Chromosomes",
+       y = "Number of occurences of the function's genes on the crhomosomes",
+       title = "Distribution of molecular functions on the chromosomes")
+selected_genes_plot
+ggsave("D:/University/4_SEMESTER/R_advanced/miRNA_project/selected_genes_loc.png", selected_genes_plot, units = 'in', width = 8)
+
+```
+
+## Distribution of molecular functions on the chromosomes 
+Selected GO identifiers:
+GO:0042632 - 	cholesterol homeostasis - general
+GO:0045727 - positive regulation of translation - general
+GO:0035195 - gene silencing by miRNA - the most general from the selected functions
+GO:0043410 - positive regulation of MAPK cascade  - rare (it is only has 4 genes)
+GO:0030336 - negative regulation of cell migration  - general
+GO:0032869 - cellular response to insulin stimulus - rare
+
+Note: 1 GO id can connect to more than one gene
+
+```{r, out.width = "700px", echo=FALSE, fig.align="center"}
+knitr::include_graphics("../docs/selected_genes_loc.png")
+```
+
 ## Chromosome length versus number of miRNAs - Arrange text annotation automatically
 
 ```{r, eval=FALSE}
