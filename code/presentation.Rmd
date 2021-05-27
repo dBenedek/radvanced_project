@@ -64,6 +64,10 @@ knitr::include_graphics("../docs/miRNA_schematic.gif")
 - Our network is __directed__, meaning the connections can only happen one was and not vice versa
 - Using the igraph package you can visualize networks and customize its visual attributes
 
+```{r, out.width = "600px", echo=FALSE, fig.align="center"}
+knitr::include_graphics("../docs/degrees_top70.png")
+```
+
 ```{r, echo=FALSE, eval=FALSE}
 # Load libraries ----
 library("tidyverse")
