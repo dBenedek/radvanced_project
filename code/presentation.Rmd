@@ -337,6 +337,9 @@ knitr::include_graphics("../docs/corr_plot.png")
 ```{r, eval=FALSE}
         (occurence <- (table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM)))
 ```
+```{r, out.width = "900px", echo=FALSE, fig.align="center"}
+knitr::include_graphics("../docs/occurence.png")
+```
 ```{r, echo=FALSE, eval=FALSE}
         (occurence <- (table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM)))
         occurence_df <- as.data.frame(table(miRNA_data_4$MIRNA,miRNA_data_4$CHROM))
@@ -489,12 +492,12 @@ knitr::include_graphics("../docs/corr_plot.png")
 ```
 
 ## Original 1. plot
-```{r, out.width = "500px", echo=FALSE, fig.align="center"}
+```{r, out.width = "570px", echo=FALSE, fig.align="center"}
 knitr::include_graphics("../docs/original1.png")
 ```
 
 ## Random 1. plot
-```{r, out.width = "500px", echo=FALSE, fig.align="center"}
+```{r, out.width = "570px", echo=FALSE, fig.align="center"}
 knitr::include_graphics("../docs/random1.png")
 ```
 
