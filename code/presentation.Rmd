@@ -604,12 +604,12 @@ ggsave("D:/University/4_SEMESTER/R_advanced/miRNA_project/selected_genes_loc.png
 
 ## Distribution of molecular functions on the chromosomes 
 Selected GO identifiers:
-- GO:0042632 - 	cholesterol homeostasis - general
-- GO:0045727 - positive regulation of translation - general
-- GO:0035195 - gene silencing by miRNA - the most general from the selected functions
-- GO:0043410 - positive regulation of MAPK cascade  - rare (it is only has 4 genes)
-- GO:0030336 - negative regulation of cell migration  - general
-- GO:0032869 - cellular response to insulin stimulus - rare
+GO:0042632 - 	cholesterol homeostasis - general, 
+GO:0045727 - positive regulation of translation - general, 
+GO:0035195 - gene silencing by miRNA - the most general from the selected functions, 
+GO:0043410 - positive regulation of MAPK cascade  - rare (it is only has 4 genes), 
+GO:0030336 - negative regulation of cell migration  - general, 
+GO:0032869 - cellular response to insulin stimulus - rare
 
 Note: 1 GO id can connect to more than one gene
 
