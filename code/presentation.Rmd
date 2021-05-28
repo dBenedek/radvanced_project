@@ -638,10 +638,9 @@ ggplot(mirna_occ_filtered, aes(x = Var2, y = Freq, fill = Var1))+
 
 ## Distribution of molecular functions depending on miRNAs
 
-```{r, out.width = "950px", echo=FALSE, fig.align="center"}
+```{r, out.width = "900px", echo=FALSE, fig.align="center"}
 knitr::include_graphics("../docs/mirna_go_term.png")
 ```
    
 ## Thank you for your kind attention!
-
-## Rrrr group
+- Rrrr group
