@@ -636,7 +636,7 @@ ggplot(mirna_occ_filtered, aes(x = Var2, y = Freq, fill = Var1))+
        title = "Distribution of molecular functions on the chromosomes")
 ```
 
-## miRNA goterm
+## Distribution of molecular functions depending on miRNAs
 
 ```{r, out.width = "950px", echo=FALSE, fig.align="center"}
 knitr::include_graphics("../docs/mirna_go_term.png")
