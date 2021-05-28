@@ -589,9 +589,9 @@ filter_go_terms <- c("GO:0042632", "GO:0045727", "GO:0035195", "GO:0043410", "GO
 filtered_go_terms <- GO_Terms %>% filter(go_id %in% filter_go_terms)
 head(filtered_go_terms)
 chr_occurrences_df <- as.data.frame(table(filtered_go_terms$go_id, filtered_go_terms$chromosome_name))
-chr_occurrences
+chr_occurrences_df
 
-selected_genes_plot <- ggplot(chr_occurrences, aes(x = Var2, y = Freq, fill = Var1))+
+selected_genes_plot <- ggplot(chr_occurrences_df, aes(x = Var2, y = Freq, fill = Var1))+
   geom_col()+
   theme_light()+
   labs(x = "Chromosomes",
