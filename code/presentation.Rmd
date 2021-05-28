@@ -616,4 +616,3 @@ Note: 1 GO id can connect to more than one gene
 ```{r, out.width = "400px", echo=FALSE, fig.align="center"}
 knitr::include_graphics("../docs/selected_genes_loc.png")
 ```
-
