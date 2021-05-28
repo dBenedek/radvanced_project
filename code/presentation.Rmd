@@ -616,3 +616,25 @@ Note: 1 GO id can connect to more than one gene
 ```{r, out.width = "400px", echo=FALSE, fig.align="center"}
 knitr::include_graphics("../docs/selected_genes_loc.png")
 ```
+```{r, eval=FALSE}
+   colnames(mirnas)[4] <- "ensembl_gene_id"
+good_merged_table <- merge(GO_Terms,mirnas,by="ensembl_gene_id")
+mirna_occurrences_df <- as.data.frame(table(good_merged_table$go_id, good_merged_table$mirna))
+mirna_occ_filtered <- mirna_occurrences_df %>%
+  filter((Freq)>0) %>% 
+  filter(Var1!="")
+
+ggplot(mirna_occ_filtered, aes(x = Var2, y = Freq, fill = Var1))+
+  geom_col()+
+  theme_light()+
+  theme(legend.position = c(.95, .95),
+        legend.justification = c("right", "top"),
+        legend.box.just = "right",
+        legend.margin = margin(6, 6, 6, 6))+
+  labs(x = "miRNA",
+       y = "Number of occurences of the function's genes on the crhomosomes",
+       title = "Distribution of molecular functions on the chromosomes")
+```
+```{r, out.width = "400px", echo=FALSE, fig.align="center"}
+knitr::include_graphics("../docs/mirna_go_term.png")
+```
