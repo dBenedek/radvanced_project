@@ -635,6 +635,13 @@ ggplot(mirna_occ_filtered, aes(x = Var2, y = Freq, fill = Var1))+
        y = "Number of occurences of the function's genes on the crhomosomes",
        title = "Distribution of molecular functions on the chromosomes")
 ```
-```{r, out.width = "400px", echo=FALSE, fig.align="center"}
+
+## miRNA goterm
+
+```{r, out.width = "950px", echo=FALSE, fig.align="center"}
 knitr::include_graphics("../docs/mirna_go_term.png")
 ```
+   
+## Thank you for your kind attention!
+
+## Rrrr group
